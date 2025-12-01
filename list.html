@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Планировщик чтения — список книг</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --primary: #2563eb;
+      --bg: #f8fafc;
+      --bg-elevated: #ffffff;
+      --text: #0b1020;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 0.75rem;
+      --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+                     0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --container: 72rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main { flex: 1; }
+
+    .section, .main {
+      padding-inline: clamp(1rem, 0.5rem + 1vw, 2rem);
+    }
+
+    .section {
+      max-width: var(--container);
+      margin-inline: auto;
+      margin-block: 1.5rem;
+      padding-block: 1.25rem;
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-elevated);
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      padding-block: 0.75rem;
+      padding-inline: 1rem;
+      isolation: isolate;
+    }
+
+    .header__inner {
+      max-width: var(--container);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      text-decoration: none;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .nav__list {
+      display: flex;
+      gap: 0.75rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav__link {
+      display: block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .nav__link:hover { background: rgba(37,99,235,0.08); }
+    .nav__link[aria-current="page"] { background: var(--primary); color: #fff; }
+
+    .skip-link {
+      position: absolute;
+      inset-inline-start: 1rem;
+      inset-block-start: -100%;
+      z-index: 1000;
+      padding: 0.5rem 0.75rem;
+      background: #111;
+      color: #fff;
+      border-radius: 0.5rem;
+      text-decoration: none;
+    }
+
+    .skip-link:focus,
+    .skip-link:focus-visible {
+      inset-block-start: 1rem;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    a, button {
+      outline-offset: 2px;
+    }
+
+    /* Таблица */
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 320px;
+      background: var(--bg-elevated);
+    }
+
+    caption {
+      text-align: left;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.5rem;
+    }
+
+    th {
+      background: #e5e7eb;
+    }
+
+    @media (max-width: 768px) {
+      .section { margin-block: 1rem; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --bg-elevated: #1e293b;
+        --text: #e2e8f0;
+        --border: #334155;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+      }
+      .section,
+      .header {
+        background: var(--bg-elevated);
+      }
+      th {
+        background: #111827;
+      }
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Перейти к основному содержимому</a>
+
+<div class="page">
+  <header class="header">
+    <div class="header__inner">
+      <a class="logo" href="index.html">Планировщик чтения</a>
+      <nav class="nav" aria-label="Основная навигация">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="index.html">Главная</a></li>
+          <li><a class="nav__link" href="list.html" aria-current="page">Список книг</a></li>
+          <li><a class="nav__link" href="add.html">Добавить книгу</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="main">
+    <section class="section">
+      <h1>Список книг</h1>
+      <p>
+        Ниже приведён пример таблицы прочитанных и планируемых книг.
+      </p>
+      <div class="table-wrapper" role="region" aria-label="Таблица списка книг" tabindex="0">
+        <table>
+          <caption>Пример данных</caption>
+          <thead>
+            <tr>
+              <th scope="col">Дата</th>
+              <th scope="col">Название</th>
+              <th scope="col">Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>01.09.2025</td>
+              <td>«Пока»</td>
+              <td>Прочитано</td>
+            </tr>
+            <tr>
+              <td>15.09.2025</td>
+              <td>«Привет»</td>
+              <td>В процессе</td>
+            </tr>
+            <tr>
+              <td>01.10.2025</td>
+              <td>«Кто ты»</td>
+              <td>Запланировано</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>
