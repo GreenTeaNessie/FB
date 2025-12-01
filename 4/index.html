@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Планировщик чтения книг — главная</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --bg-elevated: #ffffff;
+      --text: #0b1020;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 0.75rem;
+      --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+                     0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --container: 72rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      min-height: 100vh;
+      min-height: 100svh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main { flex: 1; }
+
+    .section, .main {
+      padding-inline: clamp(1rem, 0.5rem + 1vw, 2rem);
+    }
+
+    .section {
+      max-width: var(--container);
+      margin-inline: auto;
+      margin-block: 1.5rem;
+      padding-block: 1.25rem;
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+    }
+
+    /* Шапка + навигация */
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-elevated);
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      padding-block-start: calc(0.75rem + env(safe-area-inset-top));
+      padding-block-end: 0.75rem;
+      padding-inline: calc(1rem + env(safe-area-inset-left));
+      padding-inline-end: calc(1rem + env(safe-area-inset-right));
+      isolation: isolate;
+    }
+
+    .header__inner {
+      max-width: var(--container);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      text-decoration: none;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .nav__list {
+      display: flex;
+      gap: 0.75rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav__link {
+      display: block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .nav__link:hover { background: rgba(37,99,235,0.08); }
+    .nav__link[aria-current="page"] { background: var(--primary); color: #fff; }
+
+    /* Skip-link + фокус */
+
+    .skip-link {
+      position: absolute;
+      inset-inline-start: 1rem;
+      inset-block-start: -100%;
+      z-index: 1000;
+      padding: 0.5rem 0.75rem;
+      background: #111;
+      color: #fff;
+      border-radius: 0.5rem;
+      text-decoration: none;
+    }
+
+    .skip-link:focus,
+    .skip-link:focus-visible {
+      inset-block-start: 1rem;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    a, button, input, textarea, select {
+      outline-offset: 2px;
+    }
+
+    @media (pointer: coarse) {
+      a, button, .nav__link {
+        min-height: 44px;
+        padding-block: 0.75rem;
+      }
+    }
+
+    /* Герой */
+
+    .hero {
+      margin-inline: calc(50% - 50vw);
+      padding-inline: calc(50vw - 50%);
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      padding-block: 1.5rem;
+    }
+
+    .hero__inner {
+      max-width: var(--container);
+      margin-inline: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hero__text { flex: 1 1 16rem; min-width: 0; }
+
+    .hero__greeting {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.1rem, 1rem + 0.6vw, 1.3rem);
+    }
+
+    .hero__title {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.6rem, 1.2rem + 2vw, 2.1rem);
+    }
+
+    .hero__lead { max-width: 55ch; margin: 0 0 0.75rem; }
+
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    /* Кнопки */
+
+    .button {
+      display: inline-block;
+      padding-inline: 0.9rem;
+      padding-block: max(0.45rem, calc((44px - 1em)/2));
+      border-radius: 999px;
+      border: 1px solid var(--primary);
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      font: inherit;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .button:hover {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .button--ghost {
+      background: transparent;
+      color: #fff;
+      border-color: #fff;
+    }
+
+    .button--ghost:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    /* Сетка разделов */
+
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .card {
+      padding: 1rem;
+      border-radius: var(--radius);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-soft);
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card__title { margin: 0; font-weight: 600; }
+    .card__text { margin: 0; }
+
+    .card__link {
+      margin-top: auto;
+      align-self: flex-start;
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    /* Адаптивность */
+
+    @media (max-width: 768px) {
+      .section { margin-block: 1rem; }
+
+      .hero__inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    /* Тёмная тема */
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --bg-elevated: #1e293b;
+        --text: #e2e8f0;
+        --border: #334155;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+      }
+      .section,
+      .header {
+        background: var(--bg-elevated);
+      }
+    }
+
+    /* Reduced motion */
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Перейти к основному содержимому</a>
+
+<div class="page">
+  <header class="header">
+    <div class="header__inner">
+      <a class="logo" href="index.html">Планировщик чтения</a>
+      <nav class="nav" aria-label="Основная навигация">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="index.html" aria-current="page">Главная</a></li>
+          <li><a class="nav__link" href="list.html">Список книг</a></li>
+          <li><a class="nav__link" href="add.html">Добавить книгу</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="main">
+    <section class="hero">
+      <div class="hero__inner">
+        <div class="hero__text">
+          <p class="hero__greeting">Планирование чтения</p>
+          <h1 class="hero__title">Планировщик чтения книг</h1>
+          <p class="hero__lead">
+            Здесь можно вести список прочитанных книг и планировать, что читать дальше.
+          </p>
+          <div class="hero__actions">
+            <a class="button" href="list.html">Открыть список книг</a>
+            <a class="button button--ghost" href="add.html">Добавить новую книгу</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="sections-title">
+      <h2 id="sections-title">Разделы сайта</h2>
+      <div class="sections-grid">
+        <article class="card">
+          <h3 class="card__title">Список книг</h3>
+          <p class="card__text">
+            Таблица с краткой информацией о прочитанных и планируемых книгах.
+          </p>
+          <a class="card__link" href="list.html">Перейти к списку</a>
+        </article>
+        <article class="card">
+          <h3 class="card__title">Добавление книги</h3>
+          <p class="card__text">
+            Доступная форма: подписи, обязательные поля, подсказки и сообщения об ошибках.
+          </p>
+          <a class="card__link" href="add.html">Перейти к форме</a>
+        </article>
+        <article class="card">
+          <h3 class="card__title">Подтверждение</h3>
+          <p class="card__text">
+            Модальное окно сообщает об успешном добавлении книги и корректно работает с фокусом.
+          </p>
+          <a class="card__link" href="add.html">Проверить на практике</a>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>
